@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="com.example.csanchez.ift2905_wordonthestreet.BookmarkActivity">
+    tools:context="com.example.csanchez.ift2905_wordonthestreet.CategoryActivity">
 
     <RelativeLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
@@ -32,26 +32,35 @@
 
         </android.support.design.widget.AppBarLayout>
 
-        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            android:orientation="vertical"
+        <!--android:theme="@style/TextAppearance.FavoritesInstructions"-->
+
+        <TextView
+            android:id="@+id/select_cat_instr"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_below="@+id/app_bar_layout"
-            android:weightSum="1">
+            android:layout_marginBottom="5dp"
+            android:layout_marginTop="5dp"
+            android:background="#bc000000"
+            android:text="Select News Category"
+            android:textAlignment="center"
+            android:textColor="#ffffffff"
+            android:textSize="20dp" />
+
+        <LinearLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:orientation="vertical"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_below="@+id/select_cat_instr"
+            android:layout_alignParentBottom="true">
 
             <ListView
-                android:id="@+id/listviewb"
+                android:id="@+id/listView_categories"
                 android:layout_width="match_parent"
-                android:layout_height="454dp"
-                android:divider="@android:color/black"
-                android:dividerHeight="10.0sp"
-                android:layout_weight="0.89" />
+                android:layout_height="match_parent"
+                android:layout_weight="0.5"/>
 
-            <Button
-                android:id="@+id/button6"
-                android:layout_width="match_parent"
-                android:layout_height="43dp"
-                android:text="Clear ALL bookmarks" />
         </LinearLayout>
 
     </RelativeLayout>
@@ -63,6 +72,8 @@
         android:layout_gravity="start"
         app:headerLayout="@layout/nav_header_main"
         app:menu="@menu/activity_main_drawer">
+
     </android.support.design.widget.NavigationView>
+
 
 </android.support.v4.widget.DrawerLayout>

@@ -1,45 +1,19 @@
 package com.example.csanchez.ift2905_wordonthestreet;
 
-import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
-import android.webkit.WebView;
-import android.widget.AdapterView;
-import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.Checkable;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
-import android.widget.ToggleButton;
-import android.widget.CompoundButton;
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import com.squareup.picasso.Picasso;
 
-import org.json.JSONException;
-import org.json.*;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 
 
@@ -49,11 +23,9 @@ public class SingleNewsExpand extends AppCompatActivity implements View.OnClickL
     private TextView textviewDate;
     private TextView textviewDesc;
     boolean bookmarked=false;
-    Button inapp;
     Button brow;
     Button share;
     Button toggle;
-    WebView webview;
     String link;
     String date;
     String desc;
@@ -71,28 +43,42 @@ public class SingleNewsExpand extends AppCompatActivity implements View.OnClickL
         textviewDate = (TextView)findViewById(R.id.textDate);
         textviewDesc = (TextView)findViewById(R.id.textDesc);
 
-        inapp = (Button)findViewById(R.id.button3);
         brow = (Button)findViewById(R.id.button2);
         share =(Button)findViewById(R.id.button4);
         toggle = (Button)findViewById(R.id.button5);
 
-        inapp.setOnClickListener(this);
         brow.setOnClickListener(this);
         share.setOnClickListener(this);
         toggle.setOnClickListener(this);
 
         int size = prefs.getInt("bookmark_size", 0);
 
-        webview = (WebView)findViewById(R.id.webv);
         Intent i = getIntent();
         Bundle b = i.getExtras();
+        Log.v("TAG",b.get("date").toString()+b.get("desc").toString()+b.get("link").toString());
         if(b!=null){
+
+            TextView title = (TextView)findViewById(R.id.textTitle);
+            ImageView image = (ImageView) findViewById(R.id.image);
+            String titleStr = (String) b.get("title");
+            String imageStr = (String) b.get("image");
+            title.setText(titleStr);
+            Picasso.with(getApplicationContext())
+                    .load(imageStr)
+                    .into(image);
+
+
             date = (String) b.get("date");
             textviewDate.setText(date);
             desc = (String) b.get("desc");
             textviewDesc.setText(desc);
             link = (String) b.get("link");
             if(!(caller.equals("HistoryActivity")||caller.equals("BookmarkActivity"))){
+                Calendar c = Calendar.getInstance();
+                System.out.println("Current time => " + c.getTime());
+                SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
+                String historyDate = df.format(c.getTime());
+
                 j=prefsH.getInt("history_size", 0);
                 ee.putInt("history_size",j+1);
                 String listHistory = "H_url"+j;
@@ -100,7 +86,7 @@ public class SingleNewsExpand extends AppCompatActivity implements View.OnClickL
                 String dateHistory = "H_date"+j;
                 ee.putString(listHistory, link);
                 ee.putString(titleHistory, desc);
-                ee.putString(dateHistory, date);
+                ee.putString(dateHistory, "Visited on "+historyDate);
                 ee.commit();
             }
         }
@@ -117,9 +103,6 @@ public class SingleNewsExpand extends AppCompatActivity implements View.OnClickL
     @Override
     public void onClick(View v){
         switch(v.getId()){
-            case R.id.button3:
-                webview.loadUrl(link);
-                break;
             case R.id.button2:
                 Uri uri = Uri.parse(link);
                 Intent intent = new Intent(Intent.ACTION_VIEW, uri);
@@ -131,13 +114,9 @@ public class SingleNewsExpand extends AppCompatActivity implements View.OnClickL
             case R.id.button5:
                 if(!bookmarked) {
                     //mettre bookmark
-                    //Toast.makeText(getApplicationContext(), "on", Toast.LENGTH_SHORT).show();
-
                     toggle.setBackgroundResource(R.drawable.ic_book_black_48dp);
                     SharedPreferences prefs = getSharedPreferences("bookmarks", MODE_PRIVATE);
                     SharedPreferences.Editor e = getSharedPreferences("bookmarks",MODE_PRIVATE).edit();
-                    //Toast.makeText(getApplicationContext(), link, Toast.LENGTH_SHORT).show();
-                    //if(prefs.getInt("bookmark_size", 0)!=0){}
                     i=prefs.getInt("bookmark_size", 0);
                     e.putInt("bookmark_size",i+1);
 
@@ -145,7 +124,6 @@ public class SingleNewsExpand extends AppCompatActivity implements View.OnClickL
                     String titleCount = "title"+i;
                     String dateCount = "date"+i;
 
-                    Toast.makeText(getApplicationContext(), listCount, Toast.LENGTH_SHORT).show();
                     e.putString(listCount, link);
                     e.putString(titleCount, desc);
                     e.putString(dateCount, date);
@@ -155,7 +133,6 @@ public class SingleNewsExpand extends AppCompatActivity implements View.OnClickL
                 }
                 else{
                     //retirer bookmark
-                    //Toast.makeText(getApplicationContext(), "off", Toast.LENGTH_SHORT).show();
                     String urlbook;
                     int pivot=0;
                     boolean sucessRemove=false;
@@ -184,7 +161,6 @@ public class SingleNewsExpand extends AppCompatActivity implements View.OnClickL
                             String newDesc = prefs.getString("title"+((Integer)(k+1)).toString(), null);
                             String newDate = prefs.getString("date"+((Integer)(k+1)).toString(), null);
 
-                            Toast.makeText(getApplicationContext(), listCount, Toast.LENGTH_SHORT).show();
                             e.putString(listCount, newLink);
                             e.putString(titleCount, newDesc);
                             e.putString(dateCount, newDate);
